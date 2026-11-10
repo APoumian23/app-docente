@@ -1,0 +1,9 @@
+{
+  "name": "docente-portal",
+  "private": true,
+  "description": "Dependencias del portal en el VPS: todo lo demás va empaquetado en dist/servidor/index.mjs",
+  "dependencies": {
+    "better-sqlite3": "13.0.3",
+    "pyodide": "314.0.7"
+  }
+}

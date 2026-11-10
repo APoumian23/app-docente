@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+html, body, #root { height: 100%; }
+body { @apply bg-ink-50 text-ink-800 antialiased text-[14px]; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif; margin: 0; user-select: none; }
+input, textarea, select, [contenteditable] { user-select: text; }
+.arrastre { -webkit-app-region: drag; }
+.no-arrastre { -webkit-app-region: no-drag; }
+
+@layer components {
+  .btn { @apply inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed; }
+  .btn-primario { @apply btn bg-brand-500 text-white hover:bg-brand-600; }
+  .btn-secundario { @apply btn bg-white border border-ink-200 text-ink-700 hover:bg-ink-100; }
+  .btn-fantasma { @apply btn text-ink-600 hover:bg-ink-100; }
+  .btn-peligro { @apply btn bg-red-50 text-red-700 border border-red-200 hover:bg-red-100; }
+  .input { @apply w-full max-w-full rounded-lg border border-ink-200 bg-white px-3 py-1.5 text-sm text-ink-800 focus:outline-none focus:ring-2 focus:ring-brand-400/40 focus:border-brand-400; }
+  .tarjeta { @apply rounded-xl border border-ink-200 bg-white shadow-sm; }
+  .etiqueta { @apply text-xs font-semibold uppercase tracking-wide text-ink-400; }
+  .chip { @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium; }
+}
+
+.prosa { @apply text-[15px] leading-relaxed text-ink-800; user-select: text; }
+.prosa h1 { @apply text-2xl font-bold mt-4 mb-2; }
+.prosa h2 { @apply text-xl font-semibold mt-5 mb-2; }
+.prosa h3 { @apply text-lg font-semibold mt-4 mb-1; }
+.prosa p { @apply my-2; }
+.prosa ul { @apply list-disc pl-6 my-2; }
+.prosa ol { @apply list-decimal pl-6 my-2; }
+.prosa pre { @apply bg-ink-900 text-ink-50 rounded-lg p-3 my-3 text-[13px] overflow-x-auto; }
+.prosa code { @apply font-mono text-[13px]; }
+.prosa :not(pre) > code { @apply bg-ink-100 rounded px-1 py-0.5; }
+.prosa table { @apply border-collapse my-3 text-sm; }
+.prosa th, .prosa td { @apply border border-ink-200 px-2 py-1; }
+.prosa blockquote { @apply border-l-4 border-brand-400 pl-3 text-ink-600 my-2; }
+.prosa hr { @apply my-4 border-ink-200; }
+
+.diapositiva h1 { @apply text-5xl font-bold mb-8; }
+.diapositiva h2 { @apply text-4xl font-semibold mb-6; }
+/* Diapositivas con explicaciones completas (no solo títulos): letra algo menor para que quepan */
+.diapositiva ul { @apply text-2xl leading-snug space-y-3 list-disc pl-10; }
+.diapositiva p { @apply text-2xl leading-snug my-3; }
+.diapositiva pre { @apply text-2xl; }
+
+/* ---------- Modo clase ----------
+   Se usan consultas de contenedor y no de pantalla porque el contenido lleva su propio zoom (80–180 %):
+   lo que cuenta es el ancho que de verdad le queda. Reloj y panel van lado a lado mientras caben;
+   si no, se apilan y la pantalla se desplaza. El reloj toma el alto que sobra en su columna. */
+.clase-cuerpo { container: clase / size; overflow-y: auto; }
+.clase-columnas { display: flex; height: 100%; }
+.clase-reloj {
+  flex: 1 1 0; min-width: 0; overflow-y: auto;
+  display: flex; flex-direction: column; align-items: center; justify-content: safe center; gap: 1rem;
+  padding: 1.25rem 2rem; border-right: 1px solid theme('colors.ink.100');
+}
+.clase-reloj.estrecha { flex: 0 0 min(340px, 40%); padding: 1rem; }
+.reloj-caja { flex: 1 1 0; min-height: 150px; max-height: 340px; width: 100%; container-type: size; display: flex; align-items: center; justify-content: center; }
+.reloj-caja.chica { max-height: 190px; }
+.clase-panel { flex: 0 0 min(460px, 50%); min-width: 0; overflow-y: auto; }
+.clase-panel.ancho { flex: 1 1 0; }
+@container clase (max-height: 620px) {
+  .clase-si-alto { display: none; }
+}
+@container clase (max-width: 780px) {
+  .clase-columnas { flex-direction: column; height: auto; }
+  .clase-reloj, .clase-reloj.estrecha { flex: none; overflow: visible; border-right: 0; border-bottom: 1px solid theme('colors.ink.100'); }
+  .reloj-caja, .reloj-caja.chica { flex: none; height: clamp(150px, 48cqh, 320px); }
+  .clase-panel, .clase-panel.ancho { flex: none; overflow: visible; }
+  .clase-panel.ancho { height: 100cqh; }
+  /* Asistencia, material o presentación elegidos a propósito: arriba; el plan de actividades va debajo del reloj */
+  .clase-panel.primero { order: -1; border-bottom: 1px solid theme('colors.ink.100'); }
+}
+
+@keyframes pulso { 0%, 100% { opacity: 1 } 50% { opacity: .35 } }
+.pulso { animation: pulso 1s ease-in-out infinite; }
+
+/* ---------- Listas de fechas y de faltas ----------
+   Columnas fijas para que materia, tipo y «cuándo» queden alineados sin importar el largo del título.
+   Se mide el ancho real del contenedor (el contenido lleva su propio zoom): en angosto pasa a dos renglones. */
+.lista-filas { container-type: inline-size; }
+.fila-fecha {
+  display: grid; align-items: center; column-gap: .75rem; row-gap: .15rem;
+  grid-template-columns: var(--col-fecha, 6.5rem) minmax(0, 1fr) 8.5rem 7.25rem 5.25rem;
+  grid-template-areas: 'fecha titulo materia tipo cuando';
+}
+.fila-fecha > .c-fecha { grid-area: fecha; }
+.fila-fecha > .c-titulo { grid-area: titulo; min-width: 0; }
+.fila-fecha > .c-meta { display: contents; }
+.fila-fecha > .c-meta > .c-materia { grid-area: materia; min-width: 0; }
+.fila-fecha > .c-meta > .c-tipo { grid-area: tipo; justify-self: start; }
+.fila-fecha > .c-cuando { grid-area: cuando; justify-self: end; }
+@container (max-width: 40rem) {
+  .fila-fecha { grid-template-columns: var(--col-fecha, 6.5rem) minmax(0, 1fr) auto; grid-template-areas: 'fecha titulo cuando' 'fecha meta meta'; }
+  .fila-fecha > .c-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; grid-area: meta; min-width: 0; }
+}
+.fila-riesgo {
+  display: grid; align-items: center; column-gap: .75rem; row-gap: .1rem;
+  grid-template-columns: 9.5rem minmax(0, 1fr) 3.5rem;
+}
+.fila-riesgo > .c-texto { grid-column: 2 / 4; }
+@container (max-width: 26rem) {
+  .fila-riesgo { grid-template-columns: minmax(0, 1fr) auto; }
+  .fila-riesgo > .c-nivel { grid-column: 1 / 3; }
+  .fila-riesgo > .c-texto { grid-column: 1 / 3; }
+}

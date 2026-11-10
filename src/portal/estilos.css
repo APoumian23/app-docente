@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: light; }
+html { -webkit-text-size-adjust: 100%; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; margin: 0; }
+/* Nada debe desbordar a lo ancho en celular */
+html, body, #root { max-width: 100%; overflow-x: hidden; }
+img, svg, video { max-width: 100%; }
+pre { white-space: pre-wrap; word-break: break-word; }
+
+.prosa { @apply text-[15px] leading-relaxed text-ink-800 break-words; }
+.prosa p { @apply my-2; }
+/* Títulos de un cuaderno o un enunciado largo: con jerarquía, pero sin pasar al título de la pantalla */
+.prosa h1 { @apply mt-5 mb-2 text-2xl font-bold leading-tight text-ink-900; }
+.prosa h2 { @apply mt-5 mb-2 text-xl font-bold leading-tight text-ink-900; }
+.prosa h3 { @apply mt-4 mb-1.5 text-lg font-semibold text-ink-900; }
+.prosa h4, .prosa h5, .prosa h6 { @apply mt-3 mb-1 font-semibold text-ink-900; }
+.prosa hr { @apply my-4 border-ink-200; }
+.prosa blockquote { @apply my-2 rounded-lg bg-ink-100/70 px-3 py-2 text-ink-700; }
+.prosa > :first-child { @apply mt-0; }
+.prosa ul { @apply list-disc pl-6 my-2; }
+.prosa ol { @apply list-decimal pl-6 my-2; }
+.prosa pre { @apply bg-ink-900 text-ink-50 rounded-lg p-3 my-2 text-[13px] overflow-x-auto; }
+.prosa code { @apply font-mono text-[13px]; }
+.prosa :not(pre) > code { @apply bg-ink-100 rounded px-1 py-0.5; }
+.prosa .katex-display { @apply overflow-x-auto; }
+/* En un celular de 360 px una tabla ancha o una fórmula larga se recortaba sin poder verse completa:
+   ahora se desplazan a lo ancho dentro de su propio bloque */
+.prosa table { @apply my-2 block max-w-full overflow-x-auto border-collapse text-[14px]; }
+.prosa th, .prosa td { @apply border border-ink-200 px-2 py-1 align-top; }
+.prosa th { @apply bg-ink-50 font-semibold; }
+.prosa .katex { @apply inline-block max-w-full overflow-x-auto overflow-y-hidden py-0.5 align-middle; }
+/* Opciones de una pregunta: fórmulas en línea sin el espaciado de párrafo */
+.prosa-linea .katex { @apply inline-block max-w-full overflow-x-auto overflow-y-hidden py-0.5 align-middle; }
+.prosa-linea code { @apply font-mono text-[0.9em] bg-black/5 rounded px-1; }
+
+/* Juego en vivo: la letra crece con la pantalla (ancho y alto) para leerse desde el fondo del salón en el
+   proyector y completa en el celular. El código y las tablas escalan junto con el texto. */
+.prosa.juego-proyector { font-size: clamp(1.6rem, min(3.2vw, 5.5vh), 4rem); line-height: 1.25; font-weight: 600; }
+.prosa.juego-celular { font-size: clamp(1.3rem, 1rem + 1.6vw, 2.1rem); line-height: 1.3; font-weight: 600; }
+.prosa.juego-explicacion { font-size: clamp(1.15rem, min(1.8vw, 3.2vh), 2.1rem); line-height: 1.35; }
+.prosa.juego-proyector :is(code, pre, table), .prosa.juego-celular :is(code, pre, table), .prosa.juego-explicacion :is(code, pre, table) { font-size: 0.8em; }
+.juego-opcion-proyector { font-size: clamp(1.3rem, min(2.4vw, 4.2vh), 3rem); line-height: 1.2; }
+.juego-opcion-celular { font-size: clamp(1.15rem, 1rem + 0.9vw, 1.6rem); line-height: 1.25; }
+/* PIN del lobby: grande para leerlo desde el fondo, pero siempre dentro de su columna (a lo ancho y a lo alto) */
+.juego-pin { font-size: clamp(2.5rem, min(10vw, 11vh), 6rem); letter-spacing: 0.12em; line-height: 1; }
+@media (min-width: 1024px) { .juego-pin { font-size: clamp(3rem, min(6vw, 11vh), 7rem); } }
+/* Casilla donde el alumno escribe el PIN: cabe completo hasta en un celular de 320 px */
+.juego-pin-entrada { font-size: clamp(1.6rem, 8vw, 2.1rem); letter-spacing: 0.25em; text-indent: 0.25em; }
+
+/* Alumnos: el contenido no se selecciona ni se imprime (lo que escriben, sí se selecciona) */
+.alumno-protegido body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+.alumno-protegido input,
+.alumno-protegido textarea,
+.alumno-protegido [contenteditable='true'],
+.alumno-protegido .cm-editor {
+  -webkit-user-select: text;
+  user-select: text;
+}
+.alumno-protegido img {
+  -webkit-user-drag: none;
+}
+@media print {
+  .alumno-protegido body {
+    display: none !important;
+  }
+}

@@ -1,0 +1,22 @@
+# /etc/systemd/system/docente-portal.service
+[Unit]
+Description=Portal de alumnos App_Docente (portal.ejemplo.com)
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/docente-portal.env
+WorkingDirectory=/var/www/docente-portal
+ExecStart=/opt/node22/bin/node dist/servidor/index.mjs
+Restart=always
+RestartSec=3
+User=docente
+Group=docente
+# Solo escribe en su carpeta de datos
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/docente-portal
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

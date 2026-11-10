@@ -1,0 +1,161 @@
+{
+  "name": "app-docente",
+  "version": "0.1.0",
+  "description": "App de escritorio (macOS) para el docente: reloj de clase por actividad, materias por carrera, asistencia, materiales y generación didáctica con IA.",
+  "author": "APoumian Studio",
+  "main": "dist/main/index.js",
+  "private": true,
+  "packageManager": "pnpm@11.8.0",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build && pnpm run build:servidor && pnpm run build:portal",
+    "preview": "electron-vite preview",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "dist:mac": "pnpm run build && electron-builder --mac",
+    "rebuild": "electron-builder install-app-deps",
+    "postinstall": "node scripts/permisos-bin.cjs && electron-builder install-app-deps",
+    "qa": "./scripts/qa.sh",
+    "build:servidor": "node scripts/build-servidor.mjs",
+    "build:portal": "vite build --config vite.portal.config.ts",
+    "portal:dev": "vite --config vite.portal.config.ts",
+    "servidor:dev": "node scripts/servidor-dev.mjs",
+    "qa:portal": "node scripts/build-servidor.mjs && node scripts/qa-portal.mjs",
+    "build:app-web": "vite build --config vite.app.config.ts"
+  },
+  "dependencies": {
+    "@electron-toolkit/preload": "^3.0.1",
+    "@electron-toolkit/utils": "^4.0.0",
+    "@lezer/highlight": "1.2.5",
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^13.0.3",
+    "compression": "^1.8.2",
+    "express": "^5.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.5.0",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "6.2.108",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.8.4",
+    "web-push": "3.6.7"
+  },
+  "devDependencies": {
+    "@anthropic-ai/sdk": "^0.123.0",
+    "@codemirror/autocomplete": "^6.20.4",
+    "@codemirror/commands": "^6.11.1",
+    "@codemirror/lang-javascript": "6.2.5",
+    "@codemirror/lang-python": "6.2.1",
+    "@codemirror/language": "^6.13.1",
+    "@codemirror/lint": "^6.9.7",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/theme-one-dark": "^6.1.3",
+    "@codemirror/view": "^6.43.15",
+    "@types/bcryptjs": "^3.0.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/compression": "^1.8.1",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.2.0",
+    "@types/node": "^22.15.0",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^18.3.20",
+    "@types/react-dom": "^18.3.6",
+    "@types/web-push": "3.6.4",
+    "@vitejs/plugin-react": "^4.4.1",
+    "autoprefixer": "^10.4.21",
+    "codemirror": "6.0.2",
+    "date-fns": "^4.1.0",
+    "docx": "^9.5.0",
+    "electron": "^44.9.3",
+    "electron-builder": "^26.18.0",
+    "electron-vite": "^6.0.0",
+    "esbuild": "0.25.12",
+    "exceljs": "^4.4.0",
+    "jszip": "3.10.2",
+    "katex": "^0.19.1",
+    "mammoth": "^1.9.0",
+    "postcss": "^8.5.3",
+    "pyodide": "314.0.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-markdown": "^9.1.0",
+    "react-router-dom": "^7.18.4",
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "socket.io-client": "^4.8.4",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.23.13",
+    "typescript": "^5.8.3",
+    "vite": "^6.4.5",
+    "zod": "^4.6.7",
+    "zustand": "^5.0.3"
+  },
+  "build": {
+    "appId": "com.apoumian.appdocente",
+    "productName": "App_Docente",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "!dist/servidor/**",
+      "!dist/qa-*",
+      "!dist/**/*.map",
+      "resources/**/*"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "**/node_modules/better-sqlite3/**",
+      "**/node_modules/bindings/**",
+      "**/*.node"
+    ],
+    "afterPack": "scripts/firmar-mac.cjs",
+    "extraResources": [
+      {
+        "from": "dist/main/compilacion.json",
+        "to": "compilacion.json"
+      },
+      {
+        "from": "node_modules/pyodide",
+        "to": "pyodide",
+        "filter": [
+          "pyodide.js",
+          "pyodide.mjs",
+          "pyodide.asm.mjs",
+          "pyodide.asm.wasm",
+          "python_stdlib.zip",
+          "pyodide-lock.json",
+          "package.json"
+        ]
+      },
+      {
+        "from": "build/pyodide-extra",
+        "to": "pyodide",
+        "filter": [
+          "*.whl"
+        ]
+      }
+    ],
+    "extraMetadata": {
+      "main": "dist/main/index.js"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64"
+          ]
+        }
+      ],
+      "category": "public.app-category.education",
+      "icon": "build/icon.icns",
+      "identity": null,
+      "hardenedRuntime": false,
+      "gatekeeperAssess": false
+    },
+    "dmg": {
+      "title": "App_Docente"
+    }
+  }
+}
